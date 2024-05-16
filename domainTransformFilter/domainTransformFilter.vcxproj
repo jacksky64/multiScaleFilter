@@ -22,31 +22,32 @@
     <ProjectGuid>{02119560-21DC-40B7-8216-FE7FE191D4BF}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>domainTransformFilter</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -71,12 +72,18 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <Linkage-opencvx64-noCuda>static</Linkage-opencvx64-noCuda>
+    <Linkage-tbbx64>dynamic</Linkage-tbbx64>
+    <Linkage-boostx64>static</Linkage-boostx64>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <Linkage-opencvx64-noCuda>static</Linkage-opencvx64-noCuda>
+    <Linkage-tbbx64>dynamic</Linkage-tbbx64>
+    <Linkage-boostx64>static</Linkage-boostx64>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -98,10 +105,13 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>libboost_program_options-$(BOOST_X64_LIB_POSTFIX).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -133,24 +143,59 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <FloatingPointModel>Fast</FloatingPointModel>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>libboost_program_options-$(BOOST_X64_LIB_POSTFIX).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="domainTransformFilter.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MultiscaleFilter.cpp" />
+    <ClCompile Include="MultiscaleFilterAlias.cpp" />
+    <ClCompile Include="onelineCVFunctions.cpp" />
+    <ClCompile Include="tiling.cpp" />
     <ClCompile Include="util.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="domainTransformFilter.h" />
     <ClInclude Include="fmath.hpp" />
+    <ClInclude Include="FourierSeriesExpansion.h" />
+    <ClInclude Include="inlineMathFunctions.hpp" />
+    <ClInclude Include="inlineSIMDFunctions.hpp" />
+    <ClInclude Include="MultiScaleFilter.hpp" />
+    <ClInclude Include="onelineCVFunctions.hpp" />
+    <ClInclude Include="search1D.hpp" />
+    <ClInclude Include="tiling.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="u:\TBB.common.2020.3.0\build\native\TBB.common.targets" Condition="Exists('u:\TBB.common.2020.3.0\build\native\TBB.common.targets')" />
+    <Import Project="u:\TBB.redist.x64.2020.3.0\build\native\TBB.redist.x64.targets" Condition="Exists('u:\TBB.redist.x64.2020.3.0\build\native\TBB.redist.x64.targets')" />
+    <Import Project="u:\TBB.lib.x64.2020.3.0\build\native\TBB.lib.x64.targets" Condition="Exists('u:\TBB.lib.x64.2020.3.0\build\native\TBB.lib.x64.targets')" />
+    <Import Project="u:\OpenCV.staticlib-noCuda.x64.4.8.0\build\native\OpenCV.staticlib-noCuda.x64.targets" Condition="Exists('u:\OpenCV.staticlib-noCuda.x64.4.8.0\build\native\OpenCV.staticlib-noCuda.x64.targets')" />
+    <Import Project="u:\boost.common.1.81.0\build\native\boost.common.targets" Condition="Exists('u:\boost.common.1.81.0\build\native\boost.common.targets')" />
+    <Import Project="u:\boost.redist.x64.1.81.0\build\native\boost.redist.x64.targets" Condition="Exists('u:\boost.redist.x64.1.81.0\build\native\boost.redist.x64.targets')" />
+    <Import Project="u:\boost.lib.x64.1.81.0\build\native\boost.lib.x64.targets" Condition="Exists('u:\boost.lib.x64.1.81.0\build\native\boost.lib.x64.targets')" />
   </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('u:\TBB.common.2020.3.0\build\native\TBB.common.targets')" Text="$([System.String]::Format('$(ErrorText)', 'u:\TBB.common.2020.3.0\build\native\TBB.common.targets'))" />
+    <Error Condition="!Exists('u:\TBB.redist.x64.2020.3.0\build\native\TBB.redist.x64.targets')" Text="$([System.String]::Format('$(ErrorText)', 'u:\TBB.redist.x64.2020.3.0\build\native\TBB.redist.x64.targets'))" />
+    <Error Condition="!Exists('u:\TBB.lib.x64.2020.3.0\build\native\TBB.lib.x64.targets')" Text="$([System.String]::Format('$(ErrorText)', 'u:\TBB.lib.x64.2020.3.0\build\native\TBB.lib.x64.targets'))" />
+    <Error Condition="!Exists('u:\OpenCV.staticlib-noCuda.x64.4.8.0\build\native\OpenCV.staticlib-noCuda.x64.targets')" Text="$([System.String]::Format('$(ErrorText)', 'u:\OpenCV.staticlib-noCuda.x64.4.8.0\build\native\OpenCV.staticlib-noCuda.x64.targets'))" />
+    <Error Condition="!Exists('u:\boost.common.1.81.0\build\native\boost.common.targets')" Text="$([System.String]::Format('$(ErrorText)', 'u:\boost.common.1.81.0\build\native\boost.common.targets'))" />
+    <Error Condition="!Exists('u:\boost.redist.x64.1.81.0\build\native\boost.redist.x64.targets')" Text="$([System.String]::Format('$(ErrorText)', 'u:\boost.redist.x64.1.81.0\build\native\boost.redist.x64.targets'))" />
+    <Error Condition="!Exists('u:\boost.lib.x64.1.81.0\build\native\boost.lib.x64.targets')" Text="$([System.String]::Format('$(ErrorText)', 'u:\boost.lib.x64.1.81.0\build\native\boost.lib.x64.targets'))" />
+  </Target>
 </Project>

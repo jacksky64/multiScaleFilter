@@ -1,0 +1,26 @@
+{
+  "FileVersion": 2,
+  "Id": "02119560-21dc-40b7-8216-fe7fe191d4bf",
+  "Items": [
+    {
+      "Id": "99c0844c-3f99-45f3-9236-fc9e7efe4fd5",
+      "Command": "Input",
+      "Items": [
+        {
+          "Id": "7dba073a-2c87-4c2d-9517-9ccc05621727",
+          "Command": "-i \"\\\\Carsanagai1123\\e\\SolidDetectorImages\\TomoImages\\output\\20240105 Metaltronica\\08\\SIRT_reduced\\slices\""
+        }
+      ]
+    },
+    {
+      "Id": "db14260a-22ec-4287-ade1-d218521a2d0e",
+      "Command": "Output",
+      "Items": [
+        {
+          "Id": "68d7cab9-ee7d-453b-b408-880972cc3620",
+          "Command": "-o\".\\outData_08\""
+        }
+      ]
+    }
+  ]
+}

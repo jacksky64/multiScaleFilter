@@ -213,3 +213,13 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
+/domainTransformFilter/inData
+/domainTransformFilter/inData_08
+/domainTransformFilter/inData_18
+/domainTransformFilter/outData_02
+/domainTransformFilter/outData_05
+/domainTransformFilter/outData_08_denoise
+/domainTransformFilter/outData_18_est_tau
+
+#vscode
+.vs

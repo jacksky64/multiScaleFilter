@@ -943,7 +943,7 @@ void domainTransformFilter_RF_(const cv::Mat& src, cv::Mat& dst, double sigma_sp
 
 #include "fmath.hpp"
 using namespace fmath;
-inline __m128 _mm_pow_ps(__m128 a, __m128 b)
+inline __m128 _mmR_pow_ps(__m128 a, __m128 b)
 {
 	return exp_ps(_mm_mul_ps(b,log_ps(a)));
 }
@@ -969,7 +969,7 @@ void pow_fmath(const float a , InputArray srcImg, Mat & dest)
 	const __m128 ma = _mm_set1_ps(a);
 	for(i=0;i<=size-4;i+=4)
 	{
-		_mm_store_ps(d+i, _mm_pow_ps(ma, _mm_load_ps(s+i)));
+		_mm_store_ps(d+i, _mmR_pow_ps(ma, _mm_load_ps(s+i)));
 	}
 	for(;i<size;i++)
 	{
@@ -1012,7 +1012,7 @@ public:
 			for(; n<=height-1-4; n+=4)
 			{
 				__m128 mp = _mm_set_ps(dt[(n+3)*dtstep], dt[(n+2)*dtstep],dt[(n+1)*dtstep], dt[(n)*dtstep]);
-				_mm_store_ps(dtb+n, _mm_pow_ps(ma,mp));
+				_mm_store_ps(dtb+n, _mmR_pow_ps(ma,mp));
 				//pow(a, *dt);
 			}
 			for(; n<height-1; n++)
@@ -1104,7 +1104,7 @@ void recursiveFilterPowVerticalBGRA_SSE(cv::Mat& out, cv::Mat& dct, const float 
 		for(; n<=height-1-4; n+=4)
 		{
 			__m128 mp = _mm_set_ps(dt[(n+3)*dtstep], dt[(n+2)*dtstep],dt[(n+1)*dtstep], dt[(n)*dtstep]);
-			_mm_store_ps(dtb+n, _mm_pow_ps(ma,mp));
+			_mm_store_ps(dtb+n, _mmR_pow_ps(ma,mp));
 		}
 		for(; n<height-1; n++)
 		{
@@ -1273,7 +1273,7 @@ public:
 			for(; x<=width-4; x+=4)
 			{
 				__m128 mps = _mm_loadu_ps(dt+x-1);
-				mps = _mm_pow_ps(ma,mps);
+				mps = _mmR_pow_ps(ma,mps);
 				_mm_storeu_ps(dtb+x-1,mps);
 
 				__m128 mo = _mm_loadu_ps(d+4*x);
@@ -1379,7 +1379,7 @@ void recursiveFilterPowHorizontalBGRA_SSE(cv::Mat& out, cv::Mat& dct, const floa
 		for(; x<=width-4; x+=4)
 		{
 			__m128 mps = _mm_loadu_ps(dt+x-1);
-			mps = _mm_pow_ps(ma,mps);
+			mps = _mmR_pow_ps(ma,mps);
 			_mm_storeu_ps(dtb+x-1,mps);
 
 			__m128 mo = _mm_loadu_ps(d+4*x);
@@ -2448,7 +2448,7 @@ void recursiveFilterPowVerticalGraySSE(cv::Mat& out, cv::Mat& dct, float a)
 
 			//float p = dct.at<float>(y-1, x);
 			__m128 mp = _mm_loadu_ps(pdct+x);
-			mp = _mm_pow_ps(ma, mp);
+			mp = _mmR_pow_ps(ma, mp);
 			__m128 mo = _mm_loadu_ps(pout+x);
 			__m128 muo = _mm_loadu_ps(puout+x);
 
