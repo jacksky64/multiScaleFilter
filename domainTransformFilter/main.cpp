@@ -41,52 +41,52 @@ namespace fs = std::filesystem;
 #define VK_ESCAPE 0x1B
 #endif // VK_ESCAPE
 
- void smoothDemo(Mat& src)
- {
-	 string wcname = "cws";
-	 namedWindow(wcname);
-	 string wname = "smooth";
+void smoothDemo(Mat& src)
+{
+	string wcname = "cws";
+	namedWindow(wcname);
+	string wname = "smooth";
 	namedWindow(wname);
 
 	int sc = 500;
 	int ss = 30;
 	int iteration = 2;
-	
-	createTrackbar("sigma_color",wcname,&sc,2550);
-	createTrackbar("sigma_space",wcname,&ss,100);
-	createTrackbar("iteration",wcname,&iteration,10);
+
+	createTrackbar("sigma_color", wcname, &sc, 2550);
+	createTrackbar("sigma_space", wcname, &ss, 100);
+	createTrackbar("iteration", wcname, &iteration, 10);
 	int norm = 0;
-	createTrackbar("normL1/L2",wcname,&norm,1);
-	int implimentation=0;
-	createTrackbar("impliment",wcname,&implimentation,2);
-	int sw=0;
-	createTrackbar("RF/NC/IC",wcname,&sw,2);
+	createTrackbar("normL1/L2", wcname, &norm, 1);
+	int implimentation = 0;
+	createTrackbar("impliment", wcname, &implimentation, 2);
+	int sw = 0;
+	createTrackbar("RF/NC/IC", wcname, &sw, 2);
 
 	int key = 0;
-	while(key!='q' && key!=VK_ESCAPE)
+	while (key != 'q' && key != VK_ESCAPE)
 	{
-		float scf = sc*0.1f;
+		float scf = sc * 0.1f;
 		Mat show;
 		Mat input;
-		
+
 		input = src;
-		
+
 		int64 startTime = getTickCount();
-		if(sw==0)
+		if (sw == 0)
 		{
-			domainTransformFilter(input, show,scf,ss,iteration,norm+1,DTF_RF,implimentation);
+			domainTransformFilter(input, show, scf, ss, iteration, norm + 1, DTF_RF, implimentation);
 		}
-		else if(sw == 1)
+		else if (sw == 1)
 		{
-			domainTransformFilter(input, show,scf,ss,iteration,norm+1,DTF_NC,implimentation);
+			domainTransformFilter(input, show, scf, ss, iteration, norm + 1, DTF_NC, implimentation);
 		}
-		else if(sw == 2)
+		else if (sw == 2)
 		{
-			domainTransformFilter(input, show,scf,ss,iteration,norm+1,DTF_IC,implimentation);
+			domainTransformFilter(input, show, scf, ss, iteration, norm + 1, DTF_IC, implimentation);
 		}
 
-		double time = (getTickCount()-startTime)/(getTickFrequency());
-		printf("domain transform filter: %f ms\n",time*1000.0);
+		double time = (getTickCount() - startTime) / (getTickFrequency());
+		printf("domain transform filter: %f ms\n", time * 1000.0);
 
 		show.convertTo(show, CV_8U);
 		imshow(wname, show);
@@ -98,86 +98,86 @@ namespace fs = std::filesystem;
 	destroyWindow(wname);
 	destroyWindow(wcname);
 
- }
+}
 
- void jointSmoothDemo(Mat& src, Mat& guide)
- {
-	 string wname = "smooth";
-	 namedWindow(wname);
+void jointSmoothDemo(Mat& src, Mat& guide)
+{
+	string wname = "smooth";
+	namedWindow(wname);
 
-	 int sc = 500;
-	 int ss = 30;
-	 int iteration = 2;
+	int sc = 500;
+	int ss = 30;
+	int iteration = 2;
 
-	 createTrackbar("sigma_color",wname,&sc,2550);
-	 createTrackbar("sigma_space",wname,&ss,100);
-	 createTrackbar("iteration",wname,&iteration,10);
-	 int norm = 0;
-	 createTrackbar("normL1/L2",wname,&norm,1);
-	 int implimentation=0;
-	 createTrackbar("impliment",wname,&implimentation,2);
-	 int sw=0;
-	 createTrackbar("RF/NC/IC",wname,&sw,5);
+	createTrackbar("sigma_color", wname, &sc, 2550);
+	createTrackbar("sigma_space", wname, &ss, 100);
+	createTrackbar("iteration", wname, &iteration, 10);
+	int norm = 0;
+	createTrackbar("normL1/L2", wname, &norm, 1);
+	int implimentation = 0;
+	createTrackbar("impliment", wname, &implimentation, 2);
+	int sw = 0;
+	createTrackbar("RF/NC/IC", wname, &sw, 5);
 
-	 int color = 0;
-	 createTrackbar("color",wname,&color,1);
+	int color = 0;
+	createTrackbar("color", wname, &color, 1);
 
-	 int key = 0;
-	 while(key!='q' && key!=VK_ESCAPE)
-	 {
-		 float scf = sc*0.1f;
-		 Mat show;
-		 Mat input;
+	int key = 0;
+	while (key != 'q' && key != VK_ESCAPE)
+	{
+		float scf = sc * 0.1f;
+		Mat show;
+		Mat input;
 
-		 if(color==0) cvtColor(src,input,COLOR_BGR2GRAY);
-		 else input = src;
+		if (color == 0) cvtColor(src, input, COLOR_BGR2GRAY);
+		else input = src;
 
-		 int64 startTime = getTickCount();
-		 if(sw==0)
-		 {
-			 domainTransformFilter(input,show,scf,ss,iteration,norm+1,DTF_RF,implimentation);
-		 }
-		 else if(sw == 2)
-		 {
-			 domainTransformFilter(input, show,scf,ss,iteration,norm+1,DTF_NC,implimentation);
-		 }
-		 else if(sw == 4)
-		 {
-			 domainTransformFilter(input, show,scf,ss,iteration,norm+1,DTF_IC,implimentation);
-		 }
-		 if(sw==1)
-		 {
-			 domainTransformFilter(input, guide,show,scf,ss,iteration,norm+1,DTF_RF,implimentation);
-		 }
-		 else if(sw == 3)
-		 {
-			 domainTransformFilter(input, guide, show,scf,ss,iteration,norm+1,DTF_NC,implimentation);
-		 }
-		 else if(sw == 5)
-		 {
-			 domainTransformFilter(input, guide, show,scf,ss,iteration,norm+1,DTF_IC,implimentation);
-		 }
+		int64 startTime = getTickCount();
+		if (sw == 0)
+		{
+			domainTransformFilter(input, show, scf, ss, iteration, norm + 1, DTF_RF, implimentation);
+		}
+		else if (sw == 2)
+		{
+			domainTransformFilter(input, show, scf, ss, iteration, norm + 1, DTF_NC, implimentation);
+		}
+		else if (sw == 4)
+		{
+			domainTransformFilter(input, show, scf, ss, iteration, norm + 1, DTF_IC, implimentation);
+		}
+		if (sw == 1)
+		{
+			domainTransformFilter(input, guide, show, scf, ss, iteration, norm + 1, DTF_RF, implimentation);
+		}
+		else if (sw == 3)
+		{
+			domainTransformFilter(input, guide, show, scf, ss, iteration, norm + 1, DTF_NC, implimentation);
+		}
+		else if (sw == 5)
+		{
+			domainTransformFilter(input, guide, show, scf, ss, iteration, norm + 1, DTF_IC, implimentation);
+		}
 
-		 double time = (getTickCount()-startTime)/(getTickFrequency());
-		 printf("domain transform filter: %f ms\n",time*1000.0);
+		double time = (getTickCount() - startTime) / (getTickFrequency());
+		printf("domain transform filter: %f ms\n", time * 1000.0);
 
-		 imshow(wname,show);
-		 key = waitKey(1);
-	 }
+		imshow(wname, show);
+		key = waitKey(1);
+	}
 
-	 destroyWindow(wname);
- }
+	destroyWindow(wname);
+}
 
- // Function to display the image with zoom level
- void displayWithZoom(Mat& image, double zoomLevel, std::string name) 
- {
-	 Mat zoomedImage;
-	 resize(image, zoomedImage, Size(), zoomLevel, zoomLevel);
-	 imshow(name.c_str(), zoomedImage);
- }
+// Function to display the image with zoom level
+void displayWithZoom(Mat& image, double zoomLevel, std::string name)
+{
+	Mat zoomedImage;
+	resize(image, zoomedImage, Size(), zoomLevel, zoomLevel);
+	imshow(name.c_str(), zoomedImage);
+}
 
-cv::Mat WL(cv::Mat& sc,int L, int H)
- {
+cv::Mat WL(cv::Mat& sc, int L, int H)
+{
 	cv::Mat lowerMsk;
 	cv::inRange(sc, float(0), float(L), lowerMsk);
 
@@ -190,7 +190,7 @@ cv::Mat WL(cv::Mat& sc,int L, int H)
 
 	r.convertTo(r, CV_8U);
 	return r;
- }
+}
 
 
 void drawText(std::string text, cv::Mat image)
@@ -198,7 +198,7 @@ void drawText(std::string text, cv::Mat image)
 	int fontFace = cv::FONT_HERSHEY_SIMPLEX;
 	double fontScale = 1.0;
 	int thickness = 2;
-	cv::Scalar color(1); 
+	cv::Scalar color(1);
 
 	cv::Point textOrg(50, 50);
 	cv::putText(image, text, textOrg, fontFace, fontScale, color, thickness);
@@ -221,105 +221,120 @@ cv::Mat removeEdge(cv::Mat& src, double minAnatomicLevel = 100., int erodeSize =
 }
 
 
-std::vector<cv::Mat>  multiFileDetailEnhancement(std::vector<cv::Mat>& src)
+std::vector<cv::Mat>  multiFileDetailEnhancement(std::vector<cv::Mat>& src, float boostF, int sigma, int pyrLevels, int erodeSize, bool bUI)
 {
-	string sname = "smoothed";
-	string wname = "detail enhancement";
-	namedWindow(wname);
-	namedWindow(sname);
-
 	cp::MultiScaleBilateralFilter bf;
 	bf.setPyramidComputeMethod(cp::MultiScaleFilter::OpenCV);
-
-	int sigma_range = 300;
-	int ss = 0;
-	int boost = 45;
-	int L = 80;
-	int H = 320;
-	int level = 6;
 	cp::MultiScaleFilter::ScaleSpace scalespaceMethod = cp::MultiScaleFilter::ScaleSpace::Pyramid;
 
-	string wccname = "cw";
-	namedWindow(wccname);
-	createTrackbar("sigma_range", wccname, &sigma_range, 2000);
-	createTrackbar("level", wccname, &level, 9);
-	createTrackbar("boost", wccname, &boost, 1000);
-	createTrackbar("L", wccname, &L, 1000);
-	createTrackbar("H", wccname, &H, 2000);
-
-	int key = 0;
-	double zoomLevel = 1.0;
-
-	Mat bfDst;
-	int nPos = 0;
-
-	while (key != 'q' && key != VK_ESCAPE)
+	int sigma_range = sigma;
+	int ss = 0;
+	int boost = int(boostF * 10.f + 0.5f);
+	int level = pyrLevels;
+	int erode = erodeSize;
+	if (bUI)
 	{
-		switch (key)
+		int H = 320;
+		int L = 80;
+
+		string sname = "smoothed";
+		string wname = "detail enhancement";
+		namedWindow(wname);
+		namedWindow(sname);
+
+		string wccname = "cw";
+		namedWindow(wccname);
+		createTrackbar("sigma_range", wccname, &sigma_range, 2000);
+		createTrackbar("level", wccname, &level, 9);
+		createTrackbar("boost", wccname, &boost, 1000);
+		createTrackbar("erode", wccname, &erode, 11);
+		createTrackbar("L", wccname, &L, 1000);
+		createTrackbar("H", wccname, &H, 2000);
+
+		int key = 0;
+		double zoomLevel = 1.0;
+
+		Mat bfDst;
+		int nPos = 0;
+
+		while (key != 'q' && key != VK_ESCAPE)
 		{
-		case '+':
-			zoomLevel += 0.1;
-			break;
+			switch (key)
+			{
+			case '+':
+				zoomLevel += 0.1;
+				break;
 
-		case '-':
-			zoomLevel -= 0.1;
-			if (zoomLevel < 0.1) zoomLevel = 0.1;
-			break;
+			case '-':
+				zoomLevel -= 0.1;
+				if (zoomLevel < 0.1) zoomLevel = 0.1;
+				break;
 
-		case 'n':
-			nPos += 1;
-			if (nPos >= src.size())
-				nPos = 0;
-			break;
+			case 'n':
+				nPos += 1;
+				if (nPos >= src.size())
+					nPos = 0;
+				break;
 
-		case 'm':
-			nPos -= 1;
-			if (nPos < 0)
-				nPos = src.size() - 1;
-			break;
+			case 'm':
+				nPos -= 1;
+				if (nPos < 0)
+					nPos = src.size() - 1;
+				break;
+			}
+
+			cv::Mat img;
+			src[nPos].copyTo(img);
+
+			// erode edge
+			double minAnatomicLevel = 100.;
+			if (erode > 0)
+				img = removeEdge(img, minAnatomicLevel, erode);
+
+			int64 startTime = getTickCount();
+			bf.filter(src[nPos], bfDst, sigma_range, ss, boost / 10, level, scalespaceMethod);
+			double time = (getTickCount() - startTime) / (getTickFrequency());
+			printf("domain transform filter with enhancement: %f ms\n", time * 1000.0);
+
+			// saturate negative values
+			cv::threshold(bfDst, bfDst, 0, 0, cv::THRESH_TOZERO);
+
+			cv::Mat srcScaled;
+			src[nPos].copyTo(srcScaled);
+			srcScaled /= 50.f;
+			rotate(srcScaled, srcScaled, cv::ROTATE_90_CLOCKWISE);
+			flip(srcScaled, srcScaled, 1);
+			displayWithZoom(WL(srcScaled, L, H), zoomLevel, wname);
+
+			cv::Mat dstbfDst;
+			bfDst.copyTo(dstbfDst);
+			dstbfDst /= 50.f;
+			rotate(dstbfDst, dstbfDst, cv::ROTATE_90_CLOCKWISE);
+			flip(dstbfDst, dstbfDst, 1);
+			drawText("Frame " + std::to_string(nPos) + "\\" + std::to_string(src.size()), dstbfDst);
+			displayWithZoom(WL(dstbfDst, L, H), zoomLevel, sname);
+
+			imshow(wccname, Mat::zeros(cv::Size(800, 200), CV_8U));
+			key = waitKey(100);
 		}
-
-		double minAnatomicLevel = 100.;
-		int erodeSize{ 5 };
-
-		cv::Mat img;
-		src[nPos].copyTo(img);
-		img = removeEdge(img, minAnatomicLevel, erodeSize);
-
-
-		int64 startTime = getTickCount();
-		bf.filter(src[nPos], bfDst, sigma_range, ss, boost / 10, level, scalespaceMethod);
-		double time = (getTickCount() - startTime) / (getTickFrequency());
-		printf("domain transform filter with enhancement: %f ms\n", time * 1000.0);
-
-
-
-		cv::Mat srcScaled;
-		src[nPos].copyTo(srcScaled);
-		srcScaled /= 50.f;
-		rotate(srcScaled, srcScaled, cv::ROTATE_90_CLOCKWISE);
-		flip(srcScaled, srcScaled, 1);
-		displayWithZoom(WL(srcScaled, L, H), zoomLevel, wname);
-
-		cv::Mat dstbfDst;
-		bfDst.copyTo(dstbfDst);
-		dstbfDst /= 50.f;
-		rotate(dstbfDst, dstbfDst, cv::ROTATE_90_CLOCKWISE);
-		flip(dstbfDst, dstbfDst, 1);
-		drawText("Frame " + std::to_string(nPos) + "\\" + std::to_string(src.size()), dstbfDst);
-		displayWithZoom(WL(dstbfDst, L, H), zoomLevel, sname);
-
-		imshow(wccname, Mat::zeros(cv::Size(800, 200), CV_8U));
-		key = waitKey(100);
+		cv::destroyWindow(wname);
+		cv::destroyWindow(wccname);
 	}
 
-	cv::destroyWindow(wname);
-	cv::destroyWindow(wccname);
+
 	std::vector<cv::Mat> d;
-	for (auto const& s : src)
+	for (auto & s : src)
 	{
+		double minAnatomicLevel = 100.;
+		if (erode > 0)
+			s = removeEdge(s, minAnatomicLevel, erode);
+
 		cv::Mat r;
 		bf.filter(s, r, sigma_range, ss, boost / 10, level, scalespaceMethod);
+
+		// saturate negative values
+		cv::threshold(r, r, 0, 0, cv::THRESH_TOZERO);
+
 		d.push_back(r);
 	}
 	return d;
@@ -331,7 +346,7 @@ std::vector<std::string> processFolder(const std::string& folder_path)
 {
 	std::vector<std::string> allFiles;
 	// Iterate over all files in the folder
-	for (const auto& entry : fs::directory_iterator(folder_path)) 
+	for (const auto& entry : fs::directory_iterator(folder_path))
 	{
 		// Get the file name from the path
 		std::string file_name = entry.path().filename().string();
@@ -343,26 +358,24 @@ std::vector<std::string> processFolder(const std::string& folder_path)
 
 
 
-void enhFolder(const std::string& folder_path, const std::string& dest_path)
+void enhFolder(const std::string& folder_path, const std::string& dest_path, float boost, int sigma_range, int pyrLevels, int erodeSize, bool bUI)
 {
 	std::vector<std::string> allFiles = processFolder(folder_path);
 	std::vector<cv::Mat> src;
-	for (const auto &v: allFiles )
-	{ 
+	for (const auto& v : allFiles)
+	{
 		Mat img = imread(v, IMREAD_ANYDEPTH | IMREAD_GRAYSCALE);
-		//double minAnatomicLevel = 100.;
-		//img = removeEdge(img, minAnatomicLevel);
-	
+
 		img.convertTo(img, CV_32F);
 		src.push_back(img);
 	}
-	
-	auto r = multiFileDetailEnhancement(src);
+
+	auto r = multiFileDetailEnhancement(src, boost, sigma_range, pyrLevels, erodeSize, bUI);
 
 	int nPos = 0;
 	for (const auto& d : r)
 	{
-		std::filesystem::path p{dest_path};
+		std::filesystem::path p{ dest_path };
 		std::filesystem::path fn{ allFiles[nPos] };
 		p /= fn.filename();
 		p.replace_extension("tif");
@@ -377,9 +390,11 @@ int main(int argc, char** argv)
 {
 	std::string inputImgOrFolder = ".\\inData";
 	std::string outputImgOrFolder = ".\\outData";
-	float sigma_range{ 4.5f };
+	int sigma_range{ 300 };
+	float boost{ 2.5f };
 	int pyrLevels{ 6 };
 	bool bUI{ false };
+	int erodeSize = 5;
 
 	std::string filterType;
 	int halfWienerBlock{ 3 };
@@ -391,9 +406,11 @@ int main(int argc, char** argv)
 		("help,h", "produce help message")
 		("input,i", po::value<std::string>(&inputImgOrFolder), "input image folder")
 		("out,o", po::value<std::string>(&outputImgOrFolder), "output image folder")
-		("pyrLevels,y", po::value<int>(&pyrLevels), "pyramid levels")
-		("sigma,s", po::value<float>(&sigma_range), "sigma MSE gaussian")
-		("ui,g", po::value<bool>(&bUI), "show UI");
+		("pyrLevels,p", po::value<int>(&pyrLevels), "pyramid levels")
+		("erode,e", po::value<int>(&erodeSize), "erode size")
+		("sigma,s", po::value<int>(&sigma_range), "sigma MSE gaussian")
+		("boost,b", po::value<float>(&boost), "boost MSE gaussian")
+		("ui,u", po::value<bool>(&bUI), "show UI");
 
 
 	po::variables_map vm;
@@ -429,7 +446,7 @@ int main(int argc, char** argv)
 		return -1;
 	}
 
-	enhFolder(inputImgOrFolder, outputImgOrFolder);
+	enhFolder(inputImgOrFolder, outputImgOrFolder, boost, sigma_range, pyrLevels, erodeSize, bUI);
 
 	return 0;
 }

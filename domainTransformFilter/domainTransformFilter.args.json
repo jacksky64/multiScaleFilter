@@ -4,7 +4,7 @@
   "Items": [
     {
       "Id": "4cea6636-6f58-4ecc-87a9-3d7ff58a2265",
-      "Command": "-s 45"
+      "Command": "-s 300 -b 2.5 -e 0 -p 6 -u 0"
     },
     {
       "Id": "99c0844c-3f99-45f3-9236-fc9e7efe4fd5",
@@ -29,6 +29,22 @@
         {
           "Id": "0e62c8b0-d0d7-4d72-977b-87238e922e4b",
           "Command": "-i \".\\indatalog\""
+        },
+        {
+          "Id": "033094f1-6b51-4f62-9834-8fd58d8edcfd",
+          "Command": "-i \"E:\\SolidDetectorImages\\TomoImages\\output\\20240105 Metaltronica\\08_gauss_51\\SIRT_reduced\\slices\""
+        },
+        {
+          "Id": "6f099760-54d6-4187-8821-e8ba0d40dd60",
+          "Command": "-i \"E:\\SolidDetectorImages\\TomoImages\\output\\20240105 Metaltronica\\08_gauss_101\\SIRT_reduced\\slices\""
+        },
+        {
+          "Id": "a90ef6d5-7563-485a-b459-665476a9cfbe",
+          "Command": "-i \"E:\\SolidDetectorImages\\TomoImages\\output\\20240105 Metaltronica\\09\\SIRT_reduced\\slices\""
+        },
+        {
+          "Id": "48fae2aa-2578-457e-9f19-b4b40867aede",
+          "Command": "-i \"E:\\SolidDetectorImages\\TomoImages\\output\\20240105 Metaltronica\\10\\SIRT_reduced\\slices\""
         }
       ]
     },
@@ -41,16 +57,28 @@
           "Command": "-o\".\\outData_06+3\""
         },
         {
-          "Id": "f7d6bbad-5314-4c54-8d6f-f52230167b96",
-          "Command": "-o\".\\outData_06\""
-        },
-        {
           "Id": "c8a84e15-16a4-434e-83ef-c74711b317a8",
           "Command": "-o\".\\outData_15\""
         },
         {
-          "Id": "990da65f-9229-40a4-94c8-73a243596dfe",
+          "Id": "d6ef6782-c44b-4147-ae1e-3b8bc7a364fb",
           "Command": "-o\".\\outData\""
+        },
+        {
+          "Id": "990da65f-9229-40a4-94c8-73a243596dfe",
+          "Command": "-o\".\\outData_08_51\""
+        },
+        {
+          "Id": "8c6aa921-5cec-40b9-a70e-934c4efe344f",
+          "Command": "-o\".\\outData_08_101\""
+        },
+        {
+          "Id": "f7d6bbad-5314-4c54-8d6f-f52230167b96",
+          "Command": "-o\".\\outData_09\""
+        },
+        {
+          "Id": "7808cc7c-fda1-4220-81ff-7e832633db9b",
+          "Command": "-o\".\\test\\outData_10\""
         }
       ]
     }

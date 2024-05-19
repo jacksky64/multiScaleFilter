@@ -1896,34 +1896,7 @@ namespace cp
 	void MultiScaleFilter::body(const Mat& src, Mat& dest)
 	{
 		dest.create(src.size(), src.type());
-		if (src.channels() == 1)
-		{
-			gray(src, dest);
-		}
-		else
-		{
-			bool flag = true;
-			if (flag)
-			{
-				Mat gim;;
-				cv::cvtColor(src, gim, COLOR_BGR2YUV);
-				vector<Mat> vsrc;
-				split(gim, vsrc);
-				gray(vsrc[0], vsrc[0]);
-				merge(vsrc, dest);
-				cv::cvtColor(dest, dest, COLOR_YUV2BGR);
-			}
-			else
-			{
-				vector<Mat> vsrc;
-				vector<Mat> vdst(3);
-				split(src, vsrc);
-				gray(vsrc[0], vdst[0]);
-				gray(vsrc[1], vdst[1]);
-				gray(vsrc[2], vdst[2]);
-				merge(vdst, dest);
-			}
-		}
+		gray(src, dest);
 	}
 
 	void MultiScaleFilter::gray(const Mat& src, Mat& dest)
@@ -2162,11 +2135,6 @@ namespace cp
 		buildGaussianPyramid(ImageStack[0], ImageStack, level, sigma_space);
 		buildLaplacianPyramid(ImageStack[0], ImageStack, level, sigma_space);
 
-
-		//if (pyramidComputeMethod) cv::buildPyramid(ImageStack[0], ImageStack, level, borderType);
-		//else buildGaussianPyramid(ImageStack[0], ImageStack, level, sigma_space);
-
-		//buildLaplacianPyramid(ImageStack[0], ImageStack, level, 1.f);
 
 		for (int i = 0; i < ImageStack.size() - 1; i++)
 		{
