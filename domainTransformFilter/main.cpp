@@ -221,7 +221,7 @@ cv::Mat removeEdge(cv::Mat& src, double minAnatomicLevel = 100., int erodeSize =
 }
 
 
-std::vector<cv::Mat>  multiFileDetailEnhancement(std::vector<cv::Mat>& src, float boostF, int sigma, int pyrLevels, int erodeSize, bool bUI)
+std::vector<cv::Mat>  multiFileDetailEnhancement(std::vector<cv::Mat>& src, float boostF, int sigma, int pyrLevels, int erodeSize, bool bUI, int boostAdj)
 {
 	cp::MultiScaleBilateralFilter bf;
 	bf.setPyramidComputeMethod(cp::MultiScaleFilter::OpenCV);
@@ -232,6 +232,7 @@ std::vector<cv::Mat>  multiFileDetailEnhancement(std::vector<cv::Mat>& src, floa
 	int boost = int(boostF * 10.f + 0.5f);
 	int level = pyrLevels;
 	int erode = erodeSize;
+	int boostDivAdj = boostAdj;
 	if (bUI)
 	{
 		int H = 320;
@@ -248,6 +249,7 @@ std::vector<cv::Mat>  multiFileDetailEnhancement(std::vector<cv::Mat>& src, floa
 		createTrackbar("level", wccname, &level, 9);
 		createTrackbar("boost", wccname, &boost, 1000);
 		createTrackbar("erode", wccname, &erode, 11);
+		createTrackbar("boostDivAdj", wccname, &boostDivAdj, 50);
 		createTrackbar("L", wccname, &L, 1000);
 		createTrackbar("H", wccname, &H, 2000);
 
@@ -292,7 +294,8 @@ std::vector<cv::Mat>  multiFileDetailEnhancement(std::vector<cv::Mat>& src, floa
 				img = removeEdge(img, minAnatomicLevel, erode);
 
 			int64 startTime = getTickCount();
-			bf.filter(src[nPos], bfDst, sigma_range, ss, boost / 10, level, scalespaceMethod);
+			bf.zeroLevelGainAdj(1.f / (float(boostDivAdj)/10.f));
+			bf.filter(src[nPos], bfDst, sigma_range, ss, float(boost) / 10.f, level, scalespaceMethod);
 			double time = (getTickCount() - startTime) / (getTickFrequency());
 			printf("domain transform filter with enhancement: %f ms\n", time * 1000.0);
 
@@ -330,7 +333,8 @@ std::vector<cv::Mat>  multiFileDetailEnhancement(std::vector<cv::Mat>& src, floa
 			s = removeEdge(s, minAnatomicLevel, erode);
 
 		cv::Mat r;
-		bf.filter(s, r, sigma_range, ss, boost / 10, level, scalespaceMethod);
+		bf.zeroLevelGainAdj(1.f / (float(boostDivAdj) / 10.f));
+		bf.filter(s, r, sigma_range, ss, float(boost) / 10.f, level, scalespaceMethod);
 
 		// saturate negative values
 		cv::threshold(r, r, 0, 0, cv::THRESH_TOZERO);
@@ -358,7 +362,7 @@ std::vector<std::string> processFolder(const std::string& folder_path)
 
 
 
-void enhFolder(const std::string& folder_path, const std::string& dest_path, float boost, int sigma_range, int pyrLevels, int erodeSize, bool bUI)
+void enhFolder(const std::string& folder_path, const std::string& dest_path, float boost, int sigma_range, int pyrLevels, int erodeSize, bool bUI, int boostAdj)
 {
 	std::vector<std::string> allFiles = processFolder(folder_path);
 	std::vector<cv::Mat> src;
@@ -370,7 +374,7 @@ void enhFolder(const std::string& folder_path, const std::string& dest_path, flo
 		src.push_back(img);
 	}
 
-	auto r = multiFileDetailEnhancement(src, boost, sigma_range, pyrLevels, erodeSize, bUI);
+	auto r = multiFileDetailEnhancement(src, boost, sigma_range, pyrLevels, erodeSize, bUI, boostAdj);
 
 	int nPos = 0;
 	for (const auto& d : r)
@@ -392,6 +396,7 @@ int main(int argc, char** argv)
 	std::string outputImgOrFolder = ".\\outData";
 	int sigma_range{ 300 };
 	float boost{ 2.5f };
+	int boostDivAdj10{ 1 };
 	int pyrLevels{ 6 };
 	bool bUI{ false };
 	int erodeSize = 5;
@@ -410,6 +415,7 @@ int main(int argc, char** argv)
 		("erode,e", po::value<int>(&erodeSize), "erode size")
 		("sigma,s", po::value<int>(&sigma_range), "sigma MSE gaussian")
 		("boost,b", po::value<float>(&boost), "boost MSE gaussian")
+		("boostDivAdj,a", po::value<int>(&boostDivAdj10), "zero level boost divAdj")
 		("ui,u", po::value<bool>(&bUI), "show UI");
 
 
@@ -446,7 +452,7 @@ int main(int argc, char** argv)
 		return -1;
 	}
 
-	enhFolder(inputImgOrFolder, outputImgOrFolder, boost, sigma_range, pyrLevels, erodeSize, bUI);
+	enhFolder(inputImgOrFolder, outputImgOrFolder, boost, sigma_range, pyrLevels, erodeSize, bUI, boostDivAdj10);
 
 	return 0;
 }

@@ -56,7 +56,7 @@ using namespace std;
 
 inline __m128i get_storemask1(const int width, const int simdwidth)
 {
-	__m128i ret{0};
+	__m128i ret{ 0 };
 	const int WIDTH = get_simd_floor(width, simdwidth);
 	if ((width - WIDTH) == 2) ret = _mm_cmpeq_epi32(_mm_setr_epi32(0, 1, 1, 1), _mm_setzero_si128());
 	if ((width - WIDTH) == 4) ret = _mm_cmpeq_epi32(_mm_setr_epi32(0, 0, 1, 1), _mm_setzero_si128());
@@ -2124,6 +2124,11 @@ namespace cp
 		}
 	}
 
+	void MultiScaleBilateralFilter::zeroLevelGainAdj(float alpha)
+	{
+		m_alpha = alpha;
+	}
+
 	void MultiScaleBilateralFilter::pyramid(const Mat& src, Mat& dest)
 	{
 		ImageStack.resize(level + 1);
@@ -2138,7 +2143,7 @@ namespace cp
 
 		for (int i = 0; i < ImageStack.size() - 1; i++)
 		{
-			remap(ImageStack[i], ImageStack[i], 0.f, sigma_range, boost);
+			remap(ImageStack[i], ImageStack[i], 0.f, sigma_range, boost * ((i==0) ? m_alpha : 1.f));
 		}
 
 		collapseLaplacianPyramid(ImageStack, ImageStack[0]);//override srcf for saving memory	
@@ -12676,7 +12681,7 @@ namespace cp
 			vector<bool> init(threadMax);
 			for (int t = 0; t < threadMax; t++)init[t] = true;
 
-//#pragma omp parallel for schedule (dynamic)
+			//#pragma omp parallel for schedule (dynamic)
 			for (int k = 0; k < order + 1; k++)
 			{
 				const int tidx = omp_get_thread_num();
@@ -12689,7 +12694,7 @@ namespace cp
 				{
 					if (init[tidx])
 					{
-//#pragma omp critical
+						//#pragma omp critical
 						init[tidx] = false;
 						if (isUseFourierTable0)
 						{
@@ -12821,7 +12826,7 @@ namespace cp
 			for (int t = 0; t < threadMax; t++)init[t] = true;
 
 			const int NC = 2 * order;
-//#pragma omp parallel for schedule (dynamic)
+			//#pragma omp parallel for schedule (dynamic)
 			for (int nc = 0; nc < NC + 1; nc++)
 			{
 				const int tidx = omp_get_thread_num();
@@ -12836,7 +12841,7 @@ namespace cp
 
 					if (init[tidx])
 					{
-//#pragma omp critical
+						//#pragma omp critical
 						init[tidx] = false;
 						if (nc % 2 == 0)
 						{
