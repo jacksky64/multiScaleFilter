@@ -2129,6 +2129,11 @@ namespace cp
 		m_alpha = alpha;
 	}
 
+	void MultiScaleBilateralFilter::setLevelBoost(const std::vector<float>& v)
+	{
+		m_boostGain = v;
+	}
+
 	void MultiScaleBilateralFilter::pyramid(const Mat& src, Mat& dest)
 	{
 		ImageStack.resize(level + 1);
@@ -2143,7 +2148,8 @@ namespace cp
 
 		for (int i = 0; i < ImageStack.size() - 1; i++)
 		{
-			remap(ImageStack[i], ImageStack[i], 0.f, sigma_range, boost * ((i==0) ? m_alpha : 1.f));
+			remap(ImageStack[i], ImageStack[i], 0.f, sigma_range, m_boostGain[i]);
+			//remap(ImageStack[i], ImageStack[i], 0.f, sigma_range, boost * ((i==0) ? m_alpha : 1.f));
 		}
 
 		collapseLaplacianPyramid(ImageStack, ImageStack[0]);//override srcf for saving memory	

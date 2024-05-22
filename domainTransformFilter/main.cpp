@@ -233,6 +233,8 @@ std::vector<cv::Mat>  multiFileDetailEnhancement(std::vector<cv::Mat>& src, floa
 	int level = pyrLevels;
 	int erode = erodeSize;
 	int boostDivAdj = boostAdj;
+	std::vector<int> levelBoostUI(10, 50);
+
 	if (bUI)
 	{
 		int H = 320;
@@ -246,10 +248,20 @@ std::vector<cv::Mat>  multiFileDetailEnhancement(std::vector<cv::Mat>& src, floa
 		string wccname = "cw";
 		namedWindow(wccname);
 		createTrackbar("sigma_range", wccname, &sigma_range, 2000);
-		createTrackbar("level", wccname, &level, 9);
-		createTrackbar("boost", wccname, &boost, 1000);
+		createTrackbar("level", wccname, &level,10);
+		createTrackbar("boost0", wccname, &levelBoostUI[0], 100);
+		createTrackbar("boost1", wccname, &levelBoostUI[1], 100);
+		createTrackbar("boost2", wccname, &levelBoostUI[2], 100);
+		createTrackbar("boost3", wccname, &levelBoostUI[3], 100);
+		createTrackbar("boost4", wccname, &levelBoostUI[4], 100);
+		createTrackbar("boost5", wccname, &levelBoostUI[5], 100);
+		createTrackbar("boost6", wccname, &levelBoostUI[6], 100);
+		createTrackbar("boost7", wccname, &levelBoostUI[7], 100);
+		createTrackbar("boost8", wccname, &levelBoostUI[8], 100);
+		createTrackbar("boost9", wccname, &levelBoostUI[9], 100);
+		//createTrackbar("boost", wccname, &boost, 1000);
+		//createTrackbar("boostDivAdj", wccname, &boostDivAdj, 50);
 		createTrackbar("erode", wccname, &erode, 11);
-		createTrackbar("boostDivAdj", wccname, &boostDivAdj, 50);
 		createTrackbar("L", wccname, &L, 1000);
 		createTrackbar("H", wccname, &H, 2000);
 
@@ -294,7 +306,13 @@ std::vector<cv::Mat>  multiFileDetailEnhancement(std::vector<cv::Mat>& src, floa
 				img = removeEdge(img, minAnatomicLevel, erode);
 
 			int64 startTime = getTickCount();
-			bf.zeroLevelGainAdj(1.f / (float(boostDivAdj)/10.f));
+			std::vector<float> levelBoost(levelBoostUI.size());
+
+			for (int i = 0; i < levelBoost.size(); ++i)
+				levelBoost[i] = (float(levelBoostUI[i]) - 50.f) / 10.f;
+
+			bf.setLevelBoost(levelBoost);
+			//bf.zeroLevelGainAdj(1.f / (float(boostDivAdj)/10.f));
 			bf.filter(src[nPos], bfDst, sigma_range, ss, float(boost) / 10.f, level, scalespaceMethod);
 			double time = (getTickCount() - startTime) / (getTickFrequency());
 			printf("domain transform filter with enhancement: %f ms\n", time * 1000.0);
@@ -317,7 +335,7 @@ std::vector<cv::Mat>  multiFileDetailEnhancement(std::vector<cv::Mat>& src, floa
 			drawText("Frame " + std::to_string(nPos) + "\\" + std::to_string(src.size()), dstbfDst);
 			displayWithZoom(WL(dstbfDst, L, H), zoomLevel, sname);
 
-			imshow(wccname, Mat::zeros(cv::Size(800, 200), CV_8U));
+			imshow(wccname, Mat::zeros(cv::Size(800, 300), CV_8U));
 			key = waitKey(100);
 		}
 		cv::destroyWindow(wname);
@@ -333,7 +351,12 @@ std::vector<cv::Mat>  multiFileDetailEnhancement(std::vector<cv::Mat>& src, floa
 			s = removeEdge(s, minAnatomicLevel, erode);
 
 		cv::Mat r;
-		bf.zeroLevelGainAdj(1.f / (float(boostDivAdj) / 10.f));
+		//bf.zeroLevelGainAdj(1.f / (float(boostDivAdj) / 10.f));
+		std::vector<float> levelBoost(levelBoostUI.size());
+		for (int i = 0; i < levelBoost.size(); ++i)
+			levelBoost[i] = (float(levelBoostUI[i]) - 50.f) / 10.f;
+
+		bf.setLevelBoost(levelBoost);
 		bf.filter(s, r, sigma_range, ss, float(boost) / 10.f, level, scalespaceMethod);
 
 		// saturate negative values

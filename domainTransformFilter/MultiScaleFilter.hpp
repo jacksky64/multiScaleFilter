@@ -249,12 +249,15 @@ namespace cp
 	public:
 		void filter(const cv::Mat& src, cv::Mat& dest, const float sigma_range, const float sigma_space, const float boost = 1.f, const int level = 2, const ScaleSpace scaleSpaceMethod = ScaleSpace::Pyramid);
 		void zeroLevelGainAdj(float alpha);
+		void setLevelBoost(const std::vector<float>& v);
 	protected:
 		void pyramid(const cv::Mat& src, cv::Mat& dest)override;
 		void dog(const cv::Mat& src, cv::Mat& dest)override;
 		void buildDoBFStack(const cv::Mat& src, std::vector<cv::Mat>& DoBFStack, const float sigma_r, const float sigma_s, const int level);
 	private:
 		float m_alpha{ 1.f };
+		std::vector<float> m_boostGain{ 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f , 1.0f , 1.0f , 1.0f , 1.0f , 1.0f };
+
 	};
 
 
